@@ -1,3 +1,10 @@
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: "" # the subpath of your site, e.g. /blog
 title: "Test Site" # the name of your site, e.g. ACME Corp.
+
+
+## COLLECTIONS allow for storing many items with front matter and looping over them
+
+collections:
+  courses:
+    output: false  # false = no per-course pages generated
