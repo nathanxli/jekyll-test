@@ -8,12 +8,14 @@
   </head>
 
   <body>
-    {% include header.html %}
-
-    <main>{{ content }}</main>
+    <div class="shell">
+      {% include sidebar.html %}
+      <main id="main" class="content">
+        <div class="container">{{ content }}</div>
+      </main>
+    </div>
 
     {% include footer.html %}
-
-    <script src="{{'/assets/js/site.js' | relative_url}}"></script>
+    <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
   </body>
 </html>

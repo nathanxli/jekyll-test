@@ -3,7 +3,10 @@ layout: default
 title: Courses
 ---
 
-# Coursework
+<header class="page-header">
+  <h1 class="page-title">{{ page.title }}</h1>
+  <p class="page-subtitle">Browse by subject. Combine filters with OR/AND.</p>
+</header>
 
 <!-- Controls: Functionality for sorting courses by tags -->
 <section id="controls" aria-label="Course filters">

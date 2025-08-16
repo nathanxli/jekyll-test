@@ -1,0 +1,23 @@
+<aside class="sidebar" role="complementary" aria-label="Site">
+  <div class="sidebar__inner">
+    <div class="sidebar__brand">
+      <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a
+        href="{{ '/' | relative_url }}"
+        class="{% if page.url == '/' %}is-active{% endif %}"
+        >Home</a
+      >
+
+      <a
+        href="{{ '/courses/' | relative_url }}"
+        class="{% if page.url contains '/courses' %}is-active{% endif %}"
+        >Courses</a
+      >
+
+      <!-- Add more links over time -->
+    </nav>
+  </div>
+</aside>

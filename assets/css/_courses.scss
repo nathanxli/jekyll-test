@@ -1,0 +1,100 @@
+/* Controls */
+#controls {
+    display: flex;
+    gap: var(--gap);
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 1rem 0 1.25rem;
+}
+
+#controls .tags {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.tag-toggle {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .35rem .75rem;
+    cursor: pointer;
+    background: var(--chip-bg);
+    transition: background .12s ease, color .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+
+.tag-toggle[aria-pressed="true"] {
+    background: var(--chip-bg-active);
+    color: var(--chip-fg-active);
+    border-color: var(--chip-bg-active);
+}
+
+.tag-toggle:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+.logic {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+}
+
+.logic input[type="radio"] {
+    accent-color: #2563eb;
+}
+
+/* Grid of cards */
+#grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: calc(var(--gap) * 1.25);
+}
+
+/* Cards */
+.card {
+    height: var(--card-height, auto);
+    /* JS equalizes visible heights */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    background: #fff;
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: #ddd;
+}
+
+.card__title {
+    margin: 0 0 .5rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.card__desc {
+    margin: 0 0 1rem;
+    color: #374151;
+    font-size: 1.05rem;
+}
+
+.card__tags {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.card__tags .tag {
+    font-size: .8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .15rem .5rem;
+    background: #fff;
+}
