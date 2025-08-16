@@ -1,23 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>{{ page.title }} | {{ site.title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{{'/assets/css/main.css' | relative_url}}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{{'/assets/css/main.css' | relative_url}}" rel="stylesheet" />
   </head>
+
   <body>
-    <header>
-      <h1><a href="/">{{ site.title }}</a></h1>
-    </header>
+    {% include header.html %}
 
-    <main>
-      {{ content }}
-    </main>
+    <main>{{ content }}</main>
 
-    <footer>
-      <small>&copy; {{ site.time | date: "%Y" }}</small>
-    </footer>
+    {% include footer.html %}
+
     <script src="{{'/assets/js/site.js' | relative_url}}"></script>
   </body>
 </html>
