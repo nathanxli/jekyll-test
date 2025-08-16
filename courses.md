@@ -3,6 +3,8 @@ layout: default
 title: Courses
 ---
 
+# Coursework
+
 <!-- Controls: Functionality for sorting courses by tags -->
 <section id="controls" aria-label="Course filters">
   <!-- Tags -->
