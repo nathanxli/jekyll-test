@@ -1,6 +1,6 @@
 ---
 title: STAT 320
-subjects: [STAT]
+subjects: [STAT, MATH]
 
 description: Probability
 long_description: >
