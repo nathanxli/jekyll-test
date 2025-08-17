@@ -2,9 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------- Element lookup (safe) --------
   const grid = document.getElementById('grid');
   const tagButtons = Array.from(document.querySelectorAll('.tag-toggle'));
+
+  // Logic toggle pieces
   const logicSwitch = document.getElementById('logicSwitch');
   const logicLabel  = document.getElementById('logicLabel');
+  const logicThumb  = document.querySelector('.switch__thumb');
 
+  // Modal pieces
   const modal = document.getElementById('modal');
   const modalContent = modal ? modal.querySelector('#modal-content') : null;
   const modalClose   = modal ? modal.querySelector('.modal__close') : null;
@@ -13,13 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const cards = grid ? Array.from(grid.querySelectorAll('.card')) : [];
 
   // -------- Helpers --------
-  function setLogicLabel() {
-    if (!logicLabel) return;
-    logicLabel.textContent = logicSwitch && logicSwitch.checked ? 'AND' : 'OR';
+  function currentLogic() {
+    // unchecked = OR, checked = AND
+    return (logicSwitch && logicSwitch.checked) ? 'and' : 'or';
   }
 
-  function currentLogic() {
-    return (logicSwitch && logicSwitch.checked) ? 'and' : 'or';
+  function updateLogicUI() {
+    if (!logicSwitch) return;
+    const isAnd = logicSwitch.checked;
+    if (logicLabel) logicLabel.textContent = isAnd ? 'AND' : 'OR';
+    if (logicThumb) logicThumb.setAttribute('data-glyph', isAnd ? '∧' : '∨');
   }
 
   function selectedTags() {
@@ -65,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    modalClose && modalClose.focus();
+    if (modalClose) modalClose.focus();
   }
 
   function closeModal() {
@@ -90,10 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // logic switch
   if (logicSwitch) {
     logicSwitch.addEventListener('change', () => {
-      setLogicLabel();
+      updateLogicUI();
       filter();
     });
-    setLogicLabel(); // initial
+    updateLogicUI(); // initial paint (sets ∨/∧ and OR/AND text)
   }
 
   // card click / Enter to open modal
@@ -118,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // modal close paths
-  modalClose && modalClose.addEventListener('click', closeModal);
-  modalBackdrop && modalBackdrop.addEventListener('click', closeModal);
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal && modal.classList.contains('is-open')) closeModal();
   });

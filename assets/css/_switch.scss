@@ -1,21 +1,22 @@
-/* Ensure controls row always sits above the grid */
+/* Keep the controls row on its own line */
 #controls {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+  width: 100%;
+  grid-column: 1 / -1;
   margin-bottom: 1.25rem;
 }
 
-/* ---- AND/OR toggle using ∧ / ∨ ---- */
+/* ---- AND/OR switch with symbol-in-thumb ---- */
 :root {
-  --switch-w: 72px;
-  --switch-h: 34px;
-  --switch-pad: 8px;
-  --switch-thumb: 26px;
+  --switch-w: 60px; /* compact width */
+  --switch-h: 30px; /* pill height */
+  --switch-thumb: 30px; /* circle size (<= --switch-h) */
   --switch-travel: calc(
-    var(--switch-w) - var(--switch-pad) * 2 - var(--switch-thumb)
-  );
+    var(--switch-w) - var(--switch-thumb)
+  ); /* slide distance */
 }
 
 .logic--switch {
@@ -30,6 +31,7 @@
   width: var(--switch-w);
   height: var(--switch-h);
 }
+
 .switch input {
   position: absolute;
   inset: 0;
@@ -39,60 +41,70 @@
   cursor: pointer;
 }
 
-/* pill track with two equal cells */
+/* the pill "rail" */
 .switch__track {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  place-items: center;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--switch-h);
   background: #f3f4f6;
-  font-weight: 800;
-  user-select: none;
-}
-.switch__cell {
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1;
-  z-index: 2;
 }
 
-/* active side coloring */
-#logicSwitch:not(:checked) ~ .switch__track .switch__cell:nth-child(2) {
-  color: #111827;
-} /* OR active */
-#logicSwitch:checked ~ .switch__track .switch__cell:nth-child(1) {
-  color: #111827;
-} /* AND active */
-
+/* the moving circle that shows ∧ or ∨ */
 .switch__thumb {
   position: absolute;
   top: 50%;
-  left: var(--switch-pad);
+  left: 0;
   width: var(--switch-thumb);
   height: var(--switch-thumb);
-  transform: translate(0, -50%);
+  transform: translate(0, -50%); /* slide container stays vertically centered */
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.18s ease;
-  z-index: 1; /* below the labels so it never covers them */
+  transition: transform 0.5s ease;
+  z-index: 1;
+
+  /* layout for the pseudo-element only; no text node in the element itself */
+  display: block;
 }
+
+/* draw the glyph as a pseudo-element so we can nudge it independently */
+.switch__thumb::before {
+  content: attr(data-glyph); /* will be '∧' or '∨' */
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* base centering */
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #6b7280; /* muted symbol color */
+  -webkit-text-stroke: 0.35px currentColor; /* optional “fake bold” */
+}
+
+/* tiny per-glyph optical corrections */
+.switch__thumb[data-glyph="∧"]::before {
+  transform: translate(-50%, -47%);
+}
+.switch__thumb[data-glyph="∨"]::before {
+  transform: translate(-50%, -53%);
+}
+
 #logicSwitch:checked ~ .switch__thumb {
+  /* slide horizontally, keep vertical centering intact */
   transform: translate(var(--switch-travel), -50%);
 }
 
-/* label to the right: not a chip, just a subtle status */
+/* status label to the right */
 .logic__mode {
   font-variant: small-caps;
   letter-spacing: 0.06em;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 800;
 }
+
+/* focus ring for a11y */
 #logicSwitch:focus-visible ~ .switch__track {
   outline: 2px solid var(--brand);
   outline-offset: 3px;
