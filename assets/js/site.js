@@ -1,3 +1,5 @@
+// Not used anymore
+
 document.addEventListener('DOMContentLoaded', () => {
   // -------- Element lookup (safe) --------
   const grid = document.getElementById('grid');
