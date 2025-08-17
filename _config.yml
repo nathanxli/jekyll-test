@@ -2,6 +2,15 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: "" # the subpath of your site, e.g. /blog
 title: "Test Site" # the name of your site, e.g. ACME Corp.
 
+## Personal info (for sidebar)
+author:
+  name: "Nathan Li"
+  bio: "This is a bio. This is a bio. This is a bio. This is a bio."
+  links:
+    - {text: "Github", url: "https://github.com/nathanxli"}
+    - {text: "LinkedIn", url: "https://google.com"}
+  avatar: "wario.png"
+
 
 ## COLLECTIONS allow for storing many items with front matter and looping over them
 

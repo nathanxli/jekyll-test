@@ -1,10 +1,30 @@
 <aside class="sidebar" role="complementary" aria-label="Site">
   <div class="sidebar__inner">
-    <div class="sidebar__brand">
-      <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    <div class="sidebar__bio">
+      {% if site.author.avatar %}
+      <img
+        class="sidebar__avatar"
+        src="{{ site.author.avatar | relative_url }}"
+        alt="{{ site.author.name }}"
+      />
+      {% endif %}
+      <div>
+        <div class="sidebar__name">
+          {{ site.author.name | default: site.title }}
+        </div>
+        {% if site.author.bio %}
+        <p class="sidebar__about">{{ site.author.bio }}</p>
+        {% endif %} {% if site.author.links %}
+        <div class="sidebar__links">
+          {% for l in site.author.links %}
+          <a href="{{ l.url }}">{{ l.text }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
     </div>
 
-    <nav class="sidebar__nav">
+    <nav class="sidebar__nav" aria-label="Primary">
       <a
         href="{{ '/' | relative_url }}"
         class="{% if page.url == '/' %}is-active{% endif %}"
@@ -16,8 +36,6 @@
         class="{% if page.url contains '/courses' %}is-active{% endif %}"
         >Courses</a
       >
-
-      <!-- Add more links over time -->
     </nav>
   </div>
 </aside>
