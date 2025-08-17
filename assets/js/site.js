@@ -1,8 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // -------- Element lookup (safe) --------
   const grid = document.getElementById('grid');
-  const cards = Array.from(grid.querySelectorAll('.card'));
   const tagButtons = Array.from(document.querySelectorAll('.tag-toggle'));
-  const logicRadios = Array.from(document.querySelectorAll('input[name="logic"]'));
+  const logicSwitch = document.getElementById('logicSwitch');
+  const logicLabel  = document.getElementById('logicLabel');
+
+  const modal = document.getElementById('modal');
+  const modalContent = modal ? modal.querySelector('#modal-content') : null;
+  const modalClose   = modal ? modal.querySelector('.modal__close') : null;
+  const modalBackdrop= modal ? modal.querySelector('.modal__backdrop') : null;
+
+  const cards = grid ? Array.from(grid.querySelectorAll('.card')) : [];
+
+  // -------- Helpers --------
+  function setLogicLabel() {
+    if (!logicLabel) return;
+    logicLabel.textContent = logicSwitch && logicSwitch.checked ? 'AND' : 'OR';
+  }
+
+  function currentLogic() {
+    return (logicSwitch && logicSwitch.checked) ? 'and' : 'or';
+  }
 
   function selectedTags() {
     return tagButtons
@@ -10,47 +28,57 @@ document.addEventListener('DOMContentLoaded', () => {
       .map(btn => btn.dataset.tag);
   }
 
-  function currentLogic() {
-    const picked = logicRadios.find(r => r.checked);
-    return picked ? picked.value : 'or';
+  function equalizeHeights() {
+    if (!cards.length) return;
+    cards.forEach(c => { c.style.height = 'auto'; });
+    const visible = cards.filter(c => c.style.display !== 'none');
+    let max = 0;
+    visible.forEach(c => { max = Math.max(max, c.offsetHeight); });
+    document.documentElement.style.setProperty('--card-height', max > 0 ? `${max}px` : 'auto');
   }
 
   function filter() {
+    if (!cards.length) return;
     const selected = selectedTags();
     const logic = currentLogic();
 
     cards.forEach(card => {
       const tags = card.dataset.tags.split(',').map(s => s.trim());
       let show = true;
-
       if (selected.length > 0) {
-        if (logic === 'and') {
-          show = selected.every(t => tags.includes(t));
-        } else {
-          show = selected.some(t => tags.includes(t));
-        }
+        show = (logic === 'and')
+          ? selected.every(t => tags.includes(t))
+          : selected.some(t => tags.includes(t));
       }
-
       card.style.display = show ? '' : 'none';
     });
-
-    equalizeHeights(); // keep heights in sync after visibility changes
+    equalizeHeights();
   }
 
-  function equalizeHeights() {
-    // reset first so we measure natural heights
-    cards.forEach(c => { c.style.height = 'auto'; });
+  // -------- Modal logic --------
+  let lastFocused = null;
 
-    // Only consider visible cards
-    const visible = cards.filter(c => c.style.display !== 'none');
-    let max = 0;
-    visible.forEach(c => { max = Math.max(max, c.offsetHeight); });
-
-    // Apply global max
-    document.documentElement.style.setProperty('--card-height', max > 0 ? `${max}px` : 'auto');
+  function openModal(html) {
+    if (!modal || !modalContent) return;
+    lastFocused = document.activeElement;
+    modalContent.innerHTML = html;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    modalClose && modalClose.focus();
   }
 
-  // Toggle button behavior
+  function closeModal() {
+    if (!modal || !modalContent) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    modalContent.innerHTML = '';
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  }
+
+  // -------- Event wiring --------
+  // tag chips
   tagButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const pressed = btn.getAttribute('aria-pressed') === 'true';
@@ -59,32 +87,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Logic change
-  logicRadios.forEach(r => r.addEventListener('change', filter));
+  // logic switch
+  if (logicSwitch) {
+    logicSwitch.addEventListener('change', () => {
+      setLogicLabel();
+      filter();
+    });
+    setLogicLabel(); // initial
+  }
 
-  // Recompute on resize (debounced)
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(equalizeHeights, 100);
+  // card click / Enter to open modal
+  if (grid) {
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      // ignore clicks on interactive elements inside the card
+      if (e.target.closest('a, button, input, label')) return;
+
+      const tpl = card.querySelector('template.card__details');
+      if (tpl) openModal(tpl.innerHTML);
+    });
+
+    grid.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const card = e.target.closest('.card');
+      if (!card) return;
+      const tpl = card.querySelector('template.card__details');
+      if (tpl) openModal(tpl.innerHTML);
+    });
+  }
+
+  // modal close paths
+  modalClose && modalClose.addEventListener('click', closeModal);
+  modalBackdrop && modalBackdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && modal.classList.contains('is-open')) closeModal();
   });
 
-  // Initial paint
-  equalizeHeights();
+  // resize + initial
+  let t;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(equalizeHeights, 120);
+  });
 
-  // after you define logicSwitch and currentLogic():
-const logicLabel = document.getElementById('logicLabel');
-
-function setLogicLabel(){
-  if (!logicLabel) return;
-  const mode = (logicSwitch && logicSwitch.checked) ? 'AND' : 'OR';
-  logicLabel.textContent = mode;
-}
-
-// hook up events (keep your existing filter calls)
-if (logicSwitch) {
-  logicSwitch.addEventListener('change', () => { filter(); setLogicLabel(); });
-  setLogicLabel(); // initial
-}
-
+  equalizeHeights(); // initial height sync
 });

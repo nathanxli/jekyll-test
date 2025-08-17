@@ -30,15 +30,17 @@ title: Courses
   <!-- Buttons for AND / OR selection -->
   <div class="logic logic--switch">
     <label class="switch" title="Toggle AND / OR">
-      <input id="logicSwitch" type="checkbox" aria-label="Toggle match logic: OR (off) / AND (on)">
+      <input id="logicSwitch" type="checkbox" aria-label="Toggle AND (on) / OR (off)">
       <span class="switch__track">
         <span class="switch__cell">&or;</span>
         <span class="switch__cell">&and;</span>
       </span>
+      <span class="switch__labels" aria-hidden="true"></span>
       <span class="switch__thumb" aria-hidden="true"></span>
     </label>
     <span id="logicLabel" class="logic__mode" aria-live="polite" role="status">OR</span>
   </div>
+
 </section>
 
 <!-- 3. Grid -->
