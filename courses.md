@@ -3,12 +3,13 @@ layout: default
 title: Courses
 ---
 
+<!-- 1. Page Header -->
 <header class="page-header">
   <h1 class="page-title">{{ page.title }}</h1>
   <p class="page-subtitle">Browse by subject. Combine filters with OR/AND.</p>
 </header>
 
-<!-- Controls: Functionality for sorting courses by tags -->
+<!-- 2. Controls: Tags and OR/AND Toggle -->
 <section id="controls" aria-label="Course filters">
   <!-- Tags -->
   <div class="tags" role="group" aria-label="Filter by subject">
@@ -27,19 +28,18 @@ title: Courses
   </div>
 
   <!-- Buttons for AND / OR selection -->
-  <div class="logic">
-    <label>
-      <input type="radio" name="logic" value="or" checked>
-      OR
-    </label>
-    <label>
-      <input type="radio" name="logic" value="and">
-      AND
+  <div class="logic logic--switch" aria-label="Match logic">
+    <label class="switch">
+      <input id="logicSwitch" type="checkbox" aria-label="Toggle match logic: OR (off) / AND (on)">
+      <span class="switch__track">
+        <span class="switch__opt switch__opt--or">OR</span>
+        <span class="switch__opt switch__opt--and">AND</span>
+      </span>
     </label>
   </div>
 </section>
 
-<!-- Grid -->
+<!-- 3. Grid -->
 <section id="grid" aria-live="polite">
   {% for course in site.courses %}
     <article class="card"
@@ -69,10 +69,9 @@ title: Courses
       </template>
     </article>
   {% endfor %}
-
 </section>
 
-<!-- Modal (hidden by default) -->
+<!-- 4. Modal (hidden by default) -->
 <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal__backdrop"></div>
   <div class="modal__dialog" role="document">
