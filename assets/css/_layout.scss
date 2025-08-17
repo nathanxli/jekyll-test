@@ -4,14 +4,16 @@
   grid-template-columns: 280px 1fr;
 }
 
-/* Minimal sidebar – no hard divider, sits a bit lower */
+/* Sidebar */
 .sidebar {
   background: transparent;
 }
 .sidebar__inner {
-  position: sticky;
-  top: 2rem; /* “a bit lower” than the very top */
-  align-self: start;
+  position: fixed;
+  left: 0; /* stays at the left edge of the column */
+  width: 280px; /* match grid column width */
+  top: 30%;
+  transform: translateY(-50%);
   padding: 0 1rem;
 }
 
@@ -23,8 +25,8 @@
   margin-bottom: 1rem;
 }
 .sidebar__avatar {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
 }
