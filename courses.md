@@ -41,19 +41,42 @@ title: Courses
 
 <!-- Grid -->
 <section id="grid" aria-live="polite">
-  <!--
-  Loop over all course elements and emit one <article> per item
-  -->
   {% for course in site.courses %}
-    <article class="card" data-tags="{{ course.subjects | join: ',' | downcase }}">
+    <article class="card"
+             data-tags="{{ course.subjects | join: ',' | downcase }}"
+             tabindex="0" aria-label="Open details for {{ course.title }}">
       <h3 class="card__title">{{ course.title }}</h3>
       <p class="card__desc">{{ course.description }}</p>
-      <!-- Render tags in each grid item -->
       <ul class="card__tags">
         {% for t in course.subjects %}
           <li class="tag">{{ t }}</li>
         {% endfor %}
       </ul>
+      <!-- Hidden details template for the modal -->
+      <template class="card__details">
+        <article>
+          <h2 id="modal-title" class="modal__title">{{ course.title }}</h2>
+          <p class="modal__lead">
+            {% if course.long_description %}{{ course.long_description }}{% else %}{{ course.description }}{% endif %}
+          </p>
+          <dl class="modal__meta">
+            {% if course.subjects %}<dt>Subjects</dt><dd>{{ course.subjects | join: ', ' }}</dd>{% endif %}
+            {% if course.credits %}<dt>Credits</dt><dd>{{ course.credits }}</dd>{% endif %}
+            {% if course.prereqs %}<dt>Prereqs</dt><dd>{{ course.prereqs }}</dd>{% endif %}
+            {% if course.semester %}<dt>Offered</dt><dd>{{ course.semester }}</dd>{% endif %}
+          </dl>
+        </article>
+      </template>
     </article>
   {% endfor %}
+
 </section>
+
+<!-- Modal (hidden by default) -->
+<div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog" role="document">
+    <button class="modal__close" aria-label="Close">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
