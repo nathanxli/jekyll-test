@@ -4,13 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const tagButtons = Array.from(document.querySelectorAll('.tag-toggle'));
   const logicRadios = Array.from(document.querySelectorAll('input[name="logic"]'));
 
-  // Modal bits
-  const modal = document.getElementById('modal');
-  const modalContent = modal?.querySelector('#modal-content');
-  const modalClose = modal?.querySelector('.modal__close');
-  const modalBackdrop = modal?.querySelector('.modal__backdrop');
-  let lastFocused = null;
-
   function selectedTags() {
     return tagButtons
       .filter(btn => btn.getAttribute('aria-pressed') === 'true')
@@ -31,70 +24,31 @@ document.addEventListener('DOMContentLoaded', () => {
       let show = true;
 
       if (selected.length > 0) {
-        show = (logic === 'and')
-          ? selected.every(t => tags.includes(t))
-          : selected.some(t => tags.includes(t));
+        if (logic === 'and') {
+          show = selected.every(t => tags.includes(t));
+        } else {
+          show = selected.some(t => tags.includes(t));
+        }
       }
+
       card.style.display = show ? '' : 'none';
     });
 
-    equalizeHeights();
+    equalizeHeights(); // keep heights in sync after visibility changes
   }
 
   function equalizeHeights() {
+    // reset first so we measure natural heights
     cards.forEach(c => { c.style.height = 'auto'; });
+
+    // Only consider visible cards
     const visible = cards.filter(c => c.style.display !== 'none');
     let max = 0;
     visible.forEach(c => { max = Math.max(max, c.offsetHeight); });
+
+    // Apply global max
     document.documentElement.style.setProperty('--card-height', max > 0 ? `${max}px` : 'auto');
   }
-
-  // --- Modal logic ---
-  function openModal(html) {
-    if (!modal) return;
-    lastFocused = document.activeElement;
-    modalContent.innerHTML = html;
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    modalClose?.focus();
-  }
-
-  function closeModal() {
-    if (!modal) return;
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    modalContent.innerHTML = '';
-    if (lastFocused) lastFocused.focus();
-  }
-
-  // card click / Enter key
-  grid.addEventListener('click', (e) => {
-    const card = e.target.closest('.card');
-    if (!card) return;
-
-    // Don’t open modal if clicking interactive elements
-    if (e.target.closest('a, button, input, label')) return;
-
-    const tpl = card.querySelector('template.card__details');
-    if (tpl) openModal(tpl.innerHTML);
-  });
-
-  grid.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const card = e.target.closest('.card');
-      if (!card) return;
-      const tpl = card.querySelector('template.card__details');
-      if (tpl) openModal(tpl.innerHTML);
-    }
-  });
-
-  modalClose?.addEventListener('click', closeModal);
-  modalBackdrop?.addEventListener('click', closeModal);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal?.classList.contains('is-open')) closeModal();
-  });
 
   // Toggle button behavior
   tagButtons.forEach(btn => {
@@ -117,4 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial paint
   equalizeHeights();
+
+  // after you define logicSwitch and currentLogic():
+const logicLabel = document.getElementById('logicLabel');
+
+function setLogicLabel(){
+  if (!logicLabel) return;
+  const mode = (logicSwitch && logicSwitch.checked) ? 'AND' : 'OR';
+  logicLabel.textContent = mode;
+}
+
+// hook up events (keep your existing filter calls)
+if (logicSwitch) {
+  logicSwitch.addEventListener('change', () => { filter(); setLogicLabel(); });
+  setLogicLabel(); // initial
+}
+
 });
