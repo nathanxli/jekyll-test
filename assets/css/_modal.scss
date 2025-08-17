@@ -1,21 +1,42 @@
 .modal {
   position: fixed;
   inset: 0;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
 }
 .modal.is-open {
-  display: flex;
+  opacity: 1;
+  pointer-events: auto;
 }
 
+/* Backdrop: animate the *variable* that feeds blur() */
 .modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(
+    255,
+    255,
+    255,
+    0.06
+  ); /* tiny tint helps Safari render layer */
+  --modal-blur: 0px; /* closed state */
+  backdrop-filter: blur(var(--modal-blur));
+  -webkit-backdrop-filter: blur(var(--modal-blur));
+  transition: --modal-blur 2s ease; /* animate the custom property itself */
+  will-change: backdrop-filter;
 }
 
+/* open state: bump the variable */
+.modal.is-open .modal__backdrop {
+  --modal-blur: 6px;
+}
+
+/* Dialog entrance (unchanged) */
 .modal__dialog {
   position: relative;
   z-index: 1;
@@ -27,45 +48,23 @@
   border-radius: 16px;
   box-shadow: var(--shadow);
   padding: 1.25rem 1.25rem 1rem;
+
+  transform: translateY(12px) scale(0.985);
+  opacity: 0;
+  transition: transform 2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.22s ease;
+}
+.modal.is-open .modal__dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
 
-.modal__close {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.5rem;
-  border: 0;
-  background: transparent;
-  font-size: 1.75rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.5rem;
-}
-.modal__close:hover {
-  background: #f4f4f5;
-}
-
-.modal__title {
-  margin: 0 0 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-.modal__lead {
-  margin: 0 0 1rem;
-  color: #374151;
-  font-size: 1.05rem;
-}
-
-.modal__meta {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.25rem 0.75rem;
-  margin: 0.5rem 0 0;
-  padding: 0;
-}
-.modal__meta dt {
-  color: var(--muted);
-}
-.modal__meta dd {
-  margin: 0;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .modal__dialog {
+    transition: none !important;
+  }
+  .modal__backdrop {
+    --modal-blur: 0px;
+  }
 }

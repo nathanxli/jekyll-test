@@ -1,18 +1,25 @@
 :root {
-    --gap: 1rem;
-    --radius: 12px;
-    --shadow: 0 8px 24px rgba(0, 0, 0, .08);
+  --gap: 1rem;
+  --radius: 12px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 
-    --text: #111827;
-    --muted: #6b7280;
-    --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
 
-    --chip-bg: #f3f4f6;
-    --chip-bg-active: #111;
-    --chip-fg-active: #fff;
+  --chip-bg: #f3f4f6;
+  --chip-bg-active: #111;
+  --chip-fg-active: #fff;
 
-    --brand: #5b21b6;
-    /* deep purple */
-    --content-max: 1120px;
-    /* readable line length */
+  --brand: #5b21b6;
+  /* deep purple */
+  --content-max: 1120px;
+  /* readable line length */
+}
+
+/* Enables smooth interpolation of a numeric custom property */
+@property --modal-blur {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
